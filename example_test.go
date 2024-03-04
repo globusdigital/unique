@@ -2,9 +2,10 @@ package unique_test
 
 import (
 	"fmt"
+	"math"
 	"sort"
 
-	"github.com/mpvl/unique"
+	"github.com/globusdigital/unique"
 )
 
 func ExampleInts() {
@@ -19,6 +20,15 @@ func ExampleInts() {
 func ExampleFloat64s() {
 	a := []float64{1.1, 2.2, 2.2, 3.3, 3.3, 3.3}
 	unique.Float64s(&a)
+	fmt.Println(a)
+
+	// Output:
+	// [1.1 2.2 3.3]
+}
+
+func ExampleGenerics() {
+	a := []float64{1.1, 2.2, 2.2, 3.3, 3.3, 3.3, math.NaN()}
+	unique.Generics(&a)
 	fmt.Println(a)
 
 	// Output:

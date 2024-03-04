@@ -2,10 +2,13 @@
 // implement sort.Interface.
 package unique
 
-import "sort"
+import (
+	"cmp"
+	"sort"
+)
 
-// Types that implement unique.Interface can have duplicate elements removed by
-// the functionality in this package.
+// Interface represents types that implement unique.Interface can have duplicate
+// elements removed by the functionality in this package.
 type Interface interface {
 	sort.Interface
 
@@ -96,3 +99,18 @@ func Strings(a *[]string) { Unique(StringSlice{a}) }
 // StringsAreUnique tests whether a slice of strings is sorted and its elements
 // are unique.
 func StringsAreUnique(a []string) bool { return IsUniqued(sort.StringSlice(a)) }
+
+// GenericSlice attaches the methods of Interface to []cmp.Ordered.
+type GenericSlice[T cmp.Ordered] struct{ P *[]T }
+
+func (p GenericSlice[T]) Len() int           { return len(*p.P) }
+func (p GenericSlice[T]) Swap(i, j int)      { (*p.P)[i], (*p.P)[j] = (*p.P)[j], (*p.P)[i] }
+func (p GenericSlice[T]) Less(i, j int) bool { return cmp.Less((*p.P)[i], (*p.P)[j]) }
+func (p GenericSlice[T]) Truncate(n int)     { *p.P = (*p.P)[:n] }
+
+// Generics removes duplicate elements from a sorted slice of ordered types.
+func Generics[T cmp.Ordered](a *[]T) { Unique(GenericSlice[T]{a}) }
+
+// GenericsAreUnique tests whether a slice of ordered types is sorted and its
+// elements are unique.
+func GenericsAreUnique[T cmp.Ordered](a []T) bool { return IsUniqued(GenericSlice[T]{&a}) }
